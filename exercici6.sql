@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-03-2021 a las 15:32:50
+-- Tiempo de generación: 06-04-2021 a las 18:02:03
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.6
 
@@ -20,30 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `cul_ampolla`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `adreca`
---
-
-CREATE TABLE `adreca` (
-  `id_adreca` int(10) NOT NULL,
-  `carrer` varchar(75) NOT NULL,
-  `numero` int(3) NOT NULL,
-  `pis` int(2) NOT NULL,
-  `ciutat` varchar(75) NOT NULL,
-  `codi postal` int(5) NOT NULL,
-  `pais` varchar(8) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Volcado de datos para la tabla `adreca`
---
-
-INSERT INTO `adreca` (`id_adreca`, `carrer`, `numero`, `pis`, `ciutat`, `codi postal`, `pais`) VALUES
-(3, 'llacuna', 162, 1, 'barcelona', 8032, 'espanya'),
-(4, 'villalba dels arcs', 39, 2, 'barcelona', 8042, 'espanya');
 
 -- --------------------------------------------------------
 
@@ -68,6 +44,54 @@ CREATE TABLE `client` (
 INSERT INTO `client` (`id_client`, `adreca`, `nom`, `telefon`, `correu`, `data_registre`, `id_recomanacio`) VALUES
 (1, 3, 'ana pascual', 682417456, 'apascual@gmail.com', '2021-03-18 12:52:28', NULL),
 (2, 4, 'elena mir', 682417432, 'emir@gmail.com', '2021-03-18 12:53:50', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detall`
+--
+
+CREATE TABLE `detall` (
+  `id_adreca` int(10) NOT NULL,
+  `carrer` varchar(75) NOT NULL,
+  `numero` int(3) NOT NULL,
+  `pis` int(2) NOT NULL,
+  `ciutat` varchar(75) NOT NULL,
+  `codi postal` int(5) NOT NULL,
+  `pais` varchar(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `detall`
+--
+
+INSERT INTO `detall` (`id_adreca`, `carrer`, `numero`, `pis`, `ciutat`, `codi postal`, `pais`) VALUES
+(3, 'llacuna', 162, 1, 'barcelona', 8032, 'espanya'),
+(4, 'villalba dels arcs', 39, 2, 'barcelona', 8042, 'espanya');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `empleats`
+--
+
+CREATE TABLE `empleats` (
+  `id_empleat` int(11) NOT NULL,
+  `nom` int(11) NOT NULL,
+  `cognom` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `marques`
+--
+
+CREATE TABLE `marques` (
+  `id_marca` int(11) NOT NULL,
+  `nombre` varchar(75) NOT NULL,
+  `id_proveedor` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -111,22 +135,8 @@ CREATE TABLE `ulleres` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Volcado de datos para la tabla `ulleres`
---
-
-INSERT INTO `ulleres` (`id_ulleres`, `marca`, `graduacio1`, `graduacio2`, `muntura`, `color_vidre1`, `color_vidre2`, `preu`, `id_proveidor`, `id_venedor`) VALUES
-(1, 'rayban', 2, 1, 'pasta', 'blanc', 'blanc', 300, 541545452, NULL),
-(2, 'gucci', 4, 3, 'flotant', 'negre', 'negre', 400, 541545420, 21523);
-
---
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `adreca`
---
-ALTER TABLE `adreca`
-  ADD PRIMARY KEY (`id_adreca`);
 
 --
 -- Indices de la tabla `client`
@@ -134,6 +144,24 @@ ALTER TABLE `adreca`
 ALTER TABLE `client`
   ADD PRIMARY KEY (`id_client`),
   ADD KEY `romanacio_index` (`id_recomanacio`);
+
+--
+-- Indices de la tabla `detall`
+--
+ALTER TABLE `detall`
+  ADD PRIMARY KEY (`id_adreca`);
+
+--
+-- Indices de la tabla `empleats`
+--
+ALTER TABLE `empleats`
+  ADD PRIMARY KEY (`id_empleat`);
+
+--
+-- Indices de la tabla `marques`
+--
+ALTER TABLE `marques`
+  ADD KEY `proveedor_fk` (`id_proveedor`);
 
 --
 -- Indices de la tabla `proveidor`
@@ -147,23 +175,24 @@ ALTER TABLE `proveidor`
 --
 ALTER TABLE `ulleres`
   ADD PRIMARY KEY (`id_ulleres`),
-  ADD KEY `proveidor_fk` (`id_proveidor`);
+  ADD KEY `proveidor_fk` (`id_proveidor`),
+  ADD KEY `venedor_fk` (`id_venedor`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `adreca`
---
-ALTER TABLE `adreca`
-  MODIFY `id_adreca` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
 -- AUTO_INCREMENT de la tabla `client`
 --
 ALTER TABLE `client`
   MODIFY `id_client` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `detall`
+--
+ALTER TABLE `detall`
+  MODIFY `id_adreca` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `ulleres`
@@ -182,16 +211,24 @@ ALTER TABLE `client`
   ADD CONSTRAINT `romanacio_index` FOREIGN KEY (`id_recomanacio`) REFERENCES `client` (`id_client`);
 
 --
+-- Filtros para la tabla `marques`
+--
+ALTER TABLE `marques`
+  ADD CONSTRAINT `proveedor_fk` FOREIGN KEY (`id_proveedor`) REFERENCES `proveidor` (`id_nif`);
+
+--
 -- Filtros para la tabla `proveidor`
 --
 ALTER TABLE `proveidor`
-  ADD CONSTRAINT `adreca_fk` FOREIGN KEY (`adreca`) REFERENCES `adreca` (`id_adreca`);
+  ADD CONSTRAINT `adreca_fk` FOREIGN KEY (`adreca`) REFERENCES `detall` (`id_adreca`);
 
 --
 -- Filtros para la tabla `ulleres`
 --
 ALTER TABLE `ulleres`
-  ADD CONSTRAINT `proveidor_fk` FOREIGN KEY (`id_proveidor`) REFERENCES `proveidor` (`id_nif`);
+  ADD CONSTRAINT `proveidor_fk` FOREIGN KEY (`id_proveidor`) REFERENCES `proveidor` (`id_nif`),
+  ADD CONSTRAINT `ulleres_ibfk_1` FOREIGN KEY (`id_ulleres`) REFERENCES `client` (`id_client`),
+  ADD CONSTRAINT `venedor_fk` FOREIGN KEY (`id_venedor`) REFERENCES `empleats` (`id_empleat`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
